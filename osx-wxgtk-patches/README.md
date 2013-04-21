@@ -11,6 +11,17 @@
 ## HOWTO
 
     brew install wxgtk.rb
-    env KERL_CONFIGURE_OPTIONS="--enable-darwin-64bit --disable-hipe --enable-vm-probes --with-dynamic-trace=dtrace --disable-native-libs --disable-hipe --enable-kernel-poll --without-odbc --enable-threads --enable-smp-support --with-wxdir=/usr/local/Cellar/wxgtk/2.8.12 --with-wx-config=/usr/local/Cellar/wxgtk/2.8.12/bin/wx-config" kerl build git https://github.com/jj1bdx/otp kr-r15b03-1-osx-wx kr-r15b03-1-osx-wx
-
+    env KERL_CONFIGURE_OPTIONS="--enable-darwin-64bit \
+                                --disable-hipe \
+				--enable-vm-probes \
+				--with-dynamic-trace=dtrace \
+				--disable-native-libs \
+				--disable-hipe \
+				--enable-kernel-poll \
+				--without-odbc \
+				--enable-threads \
+				--enable-smp-support \
+				--with-wxdir=/usr/local/Cellar/wxgtk/2.8.12 \
+				--with-wx-config=/usr/local/Cellar/wxgtk/2.8.12/bin/wx-config" \
+    kerl build git https://github.com/jj1bdx/otp kr-r15b03-1-osx-wx kr-r15b03-1-osx-wx
 

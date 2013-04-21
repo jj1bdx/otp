@@ -1,5 +1,5 @@
 diff --git a/lib/wx/configure.in b/lib/wx/configure.in
-index 7b35fed..71e77d1 100755
+index 7b35fed..902ac46 100755
 --- a/lib/wx/configure.in
 +++ b/lib/wx/configure.in
 @@ -75,26 +75,6 @@ if test  X"$MIXED_CYGWIN_VC" == X"yes" -o X"$MIXED_MSYS_VC" == X"yes"; then
@@ -38,7 +38,13 @@ index 7b35fed..71e77d1 100755
  	;;
      mingw32)
  	CFLAGS="$CFLAGS -DWIN32 -DWINVER=0x0500 -D_WINDOWS -D_UNICODE -DUNICODE"
-@@ -183,7 +163,7 @@ case $host_os in
+@@ -178,12 +158,12 @@ AC_SUBST(OBJC_CFLAGS)
+ 
+ case $host_os in
+     darwin*)
+-	LDFLAGS="-bundle -flat_namespace -undefined warning -fPIC $LDFLAGS"
++	LDFLAGS="-bundle -flat_namespace -undefined warning -fPIC -L/opt/X11/lib -framework Appkit $LDFLAGS"
+ 	# Check sizof_void_p as future will hold 64bit MacOS wx
  	if test $ac_cv_sizeof_void_p = 4; then
  	    LDFLAGS="-m32 $LDFLAGS"
  	fi		   
