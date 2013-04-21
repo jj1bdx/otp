@@ -1,0 +1,13 @@
+diff --git a/lib/wx/configure.in b/lib/wx/configure.in
+index 7b35fed..71e77d1 100755
+--- a/lib/wx/configure.in
++++ b/lib/wx/configure.in
+@@ -156,7 +136,7 @@ case $host_os in
+ 	   fi
+   	fi
+   	CFLAGS=$saved_CFLAGS
+-	CPPFLAGS="$CPPFLAGS -D_MACOSX $PTHR_CFLAGS"
++	CPPFLAGS="$CPPFLAGS -I/opt/X11/include -D_MACOSX $PTHR_CFLAGS"
+ 	;;
+     mingw32)
+ 	CFLAGS="$CFLAGS -DWIN32 -DWINVER=0x0500 -D_WINDOWS -D_UNICODE -DUNICODE"
