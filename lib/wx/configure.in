@@ -158,12 +158,12 @@ AC_SUBST(OBJC_CFLAGS)
 
 case $host_os in
     darwin*)
-	LDFLAGS="-bundle -flat_namespace -undefined warning -fPIC $LDFLAGS"
+	LDFLAGS="-bundle -flat_namespace -undefined warning -fPIC -L/opt/X11/lib -framework Appkit $LDFLAGS"
 	# Check sizof_void_p as future will hold 64bit MacOS wx
 	if test $ac_cv_sizeof_void_p = 4; then
 	    LDFLAGS="-m32 $LDFLAGS"
 	fi		   
-	GL_LIBS="-framework OpenGL -framework Appkit -framework Cocoa -lX11 -lGL -lGLU"
+	GL_LIBS="-framework OpenGL -framework Appkit"
 	;;
     win32)
         LDFLAGS="-dll $LDFLAGS"
