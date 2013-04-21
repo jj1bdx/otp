@@ -9,6 +9,7 @@ class Wxgtk < Formula
 
   depends_on :x11 # if your formula requires any X11/XQuartz components
   depends_on 'gtk+'
+  depends_on 'pkg-config'
 
   def install
 
