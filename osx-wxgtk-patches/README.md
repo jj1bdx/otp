@@ -1,4 +1,8 @@
-# OS X wxgtk build formulas
+# NO LONGER VALID: OS X wxgtk build formulas
+
+* This set of patches does not build on Mavericks 10.9 and R16B03.
+
+## For the reference only
 
 * For Mountain Lion 10.8.3
 
