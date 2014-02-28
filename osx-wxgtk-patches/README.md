@@ -1,5 +1,7 @@
 # NO LONGER VALID: OS X wxgtk build formulas
 
+* See https://gist.github.com/jj1bdx/9262726 for the building procedure.
+
 * This set of patches does not build on Mavericks 10.9 and R16B03.
 
 ## For the reference only
