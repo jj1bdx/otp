@@ -638,7 +638,7 @@ static void fpe_sig_action(int sig, siginfo_t *si, void *puc)
     fpstate->mxcsr = 0x1F80;
     fpstate->sw &= ~0xFF;
 #endif
-#if 0
+#if 1
     {
 	char buf[64];
 	snprintf(buf, sizeof buf, "%s: FPE at %p\r\n", __FUNCTION__, (void*)pc);
@@ -839,6 +839,12 @@ matherr(struct exception *exc)
 {
 #if !defined(NO_FPE_SIGNALS)
     volatile unsigned long *fpexnp = erts_get_current_fp_exception();
+#if 1
+    char buf[128];
+    snprintf(buf, sizeof buf, "sys_float.c:matherr() type %d from %s at %p\r\n",
+	     exc->type, exc->name, (void*)__builtin_return_address(0));
+    write(2, buf, strlen(buf));
+#endif
     if (fpexnp != NULL)
 	*fpexnp = (unsigned long)__builtin_return_address(0);
 #endif
