@@ -1001,8 +1001,6 @@ efile_sendfile(Efile_error* errInfo, int in_fd, int out_fd,
 			  NULL, &len,
 #if defined(__FreeBSD__) && (__FreeBSD_version >= 1100000) /* FreeBSD 11 */
 #define READAHEAD_PAGES (16)
-#pragma message("efile_sendfile(): FreeBSD version is " __FreeBSD_version)
-
 			  SF_FLAGS(READAHEAD_PAGES, SF_NOCACHE));
 #else
 			  0);
