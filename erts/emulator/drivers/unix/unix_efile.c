@@ -998,9 +998,22 @@ efile_sendfile(Efile_error* errInfo, int in_fd, int out_fd,
     do {
       if (*nbytes > SENDFILE_CHUNK_SIZE)
 	retval = sendfile(in_fd, out_fd, *offset, SENDFILE_CHUNK_SIZE,
-			  NULL, &len, 0);
+			  NULL, &len,
+#if defined(__FreeBSD__) && (__FreeBSD_version >= 1100000) /* FreeBSD 11 */
+#define READAHEAD_PAGES (16)
+#pragma message("efile_sendfile(): FreeBSD version is " __FreeBSD_version)
+
+			  SF_FLAGS(READAHEAD_PAGES, SF_NOCACHE));
+#else
+			  0);
+#endif /* FreeBSD 11 */
       else
-	retval = sendfile(in_fd, out_fd, *offset, *nbytes, NULL, &len, 0);
+	retval = sendfile(in_fd, out_fd, *offset, *nbytes, NULL, &len,
+#if defined(__FreeBSD__) && (__FreeBSD_version >= 1100000) /* FreeBSD 11 */
+			  SF_FLAGS(READAHEAD_PAGES, SF_NOCACHE));
+#else
+			  0);
+#endif /* FreeBSD 11 */
       if (retval != -1 || errno == EAGAIN || errno == EINTR) {
 	*offset += len;
 	*nbytes -= len;
