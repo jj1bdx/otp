@@ -1000,15 +1000,16 @@ efile_sendfile(Efile_error* errInfo, int in_fd, int out_fd,
 	retval = sendfile(in_fd, out_fd, *offset, SENDFILE_CHUNK_SIZE,
 			  NULL, &len,
 #if defined(__FreeBSD__) && (__FreeBSD_version >= 1100000) /* FreeBSD 11 */
-#define READAHEAD_PAGES (4096)
-			  SF_FLAGS(READAHEAD_PAGES, SF_NOCACHE));
+#define READAHEAD_PAGES (16)
+#define SENDFILE_FLAGS (SF_NOCACHE | SF_NODISKIO)
+			  SF_FLAGS(READAHEAD_PAGES, SENDFILE_FLAGS));
 #else
 			  0);
 #endif /* FreeBSD 11 */
       else
 	retval = sendfile(in_fd, out_fd, *offset, *nbytes, NULL, &len,
 #if defined(__FreeBSD__) && (__FreeBSD_version >= 1100000) /* FreeBSD 11 */
-			  SF_FLAGS(READAHEAD_PAGES, SF_NOCACHE));
+			  SF_FLAGS(READAHEAD_PAGES, SENDFILE_FLAGS));
 #else
 			  0);
 #endif /* FreeBSD 11 */
