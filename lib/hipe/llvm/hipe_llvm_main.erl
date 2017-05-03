@@ -516,7 +516,7 @@ unique_folder(FunName, Arity, Options) ->
       true ->  %% Store folder in current directory
         DirName;
       false -> %% Temporarily store folder in tempfs (/dev/shm/)
-        "/dev/shm/" ++ DirName
+        "/tmp/" ++ DirName
     end,
   %% Make sure it does not exist
   case dir_exists(Dir) of
