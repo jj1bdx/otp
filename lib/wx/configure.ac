@@ -205,10 +205,8 @@ EXTRA_LDFLAGS=
 case $host_os in
     darwin*)
 	# beam.smp has not been built yet, so we must not use the
-        # TODO: the whole undefined symbol messages have to be suppressed
-        #       to pass the wx linking test later.
-        #       This is not a fundamental fix.
-        LDFLAGS="$MAC_MIN -bundle -undefined suppress -fPIC $LDFLAGS"
+        # -bundle_loader option in the configuration tests.
+	LDFLAGS="$MAC_MIN -bundle $LDFLAGS"
 	EXTRA_LDFLAGS=" -bundle_loader ${ERL_TOP}/bin/$host/beam.smp"
 	GL_LIBS="-framework OpenGL"
 	;;
@@ -669,6 +667,8 @@ saved_LIBS=$LIBS
 
 if test X"$WX_HAVE_STATIC_LIBS" = X"true" ; then
    LIBS=$WX_LIBS_STATIC   
+else
+   LIBS=$WX_LIBS
 fi
 
 AC_LINK_IFELSE([AC_LANG_SOURCE([[
