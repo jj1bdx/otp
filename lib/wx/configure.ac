@@ -205,8 +205,10 @@ EXTRA_LDFLAGS=
 case $host_os in
     darwin*)
 	# beam.smp has not been built yet, so we must not use the
-        # -bundle_loader option in the configuration tests.
-	LDFLAGS="$MAC_MIN -bundle -fPIC $LDFLAGS"
+        # TODO: the whole undefined symbol messages have to be suppressed
+        #       to pass the wx linking test later.
+        #       This is not a fundamental fix.
+        LDFLAGS="$MAC_MIN -bundle -undefined suppress -fPIC $LDFLAGS"
 	EXTRA_LDFLAGS=" -bundle_loader ${ERL_TOP}/bin/$host/beam.smp"
 	GL_LIBS="-framework OpenGL"
 	;;
