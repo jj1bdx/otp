@@ -1,0 +1,134 @@
+Fix symbol clashes between ERTS own PCRE2 and a real lib if dynamically loaded
+
+https://github.com/erlang/otp/pull/9831
+https://github.com/erlang/otp/pull/9831/commits/3a4a95a98de1da6d05bc4f0dfaf43ad058c1b4af
+
+From 3a4a95a98de1da6d05bc4f0dfaf43ad058c1b4af Mon Sep 17 00:00:00 2001
+From: Sverker Eriksson <sverker@erlang.org>
+Date: Mon, 12 May 2025 19:25:49 +0200
+Subject: [PATCH] erts: Add -fvisibility=hidden for PCRE2 compilation
+
+---
+ erts/configure             | 43 ++++++++++++++++++++++++++++++++++++++
+ erts/configure.ac          |  7 ++++++-
+ erts/emulator/Makefile.in  |  1 +
+ erts/emulator/pcre/pcre.mk |  2 +-
+ 4 files changed, 51 insertions(+), 2 deletions(-)
+
+diff --git a/erts/configure b/erts/configure
+index 01f564cbbd79..d3bcb4047898 100755
+--- a/erts/configure
++++ b/erts/configure
+@@ -704,6 +704,7 @@ XCRUN
+ LLVM_PROFDATA
+ WFLAGS
+ DEBUG_FLAGS
++VISIBILITY_HIDDEN
+ ERTS_CONFIG_H_IDIR
+ MIXED_MINGW
+ MIXED_VC
+@@ -8554,14 +8555,56 @@ fi
+ 
+ 
+ 
++    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if we can add -fvisibility=hidden to VISIBILITY_HIDDEN (via CFLAGS)" >&5
++printf %s "checking if we can add -fvisibility=hidden to VISIBILITY_HIDDEN (via CFLAGS)... " >&6; }
++    saved_CFLAGS=$CFLAGS;
++    CFLAGS="-Werror -fvisibility=hidden $VISIBILITY_HIDDEN";
++    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++int
++main (void)
++{
++return 0;
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_compile "$LINENO"
++then :
++  can_enable_flag=true
++else case e in #(
++  e) can_enable_flag=false ;;
++esac
++fi
++rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
++    CFLAGS=$saved_CFLAGS;
++    if test "X$can_enable_flag" = "Xtrue"
++then :
++
++        VISIBILITY_HIDDEN="-fvisibility=hidden $VISIBILITY_HIDDEN"
++        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
++printf "%s\n" "yes" >&6; }
++
++else case e in #(
++  e)
++        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
++printf "%s\n" "no" >&6; }
++       ;;
++esac
++fi
++
++
+ else case e in #(
+   e)
+   WFLAGS=""
+   WERRORFLAGS=${WERRORFLAGS:-""}
++  VISIBILITY_HIDDEN=""
+   ;;
+ esac
+ fi
+ 
++
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking C99 support" >&5
+ printf %s "checking C99 support... " >&6; }
+ 
+diff --git a/erts/configure.ac b/erts/configure.ac
+index 9cde61b42c94..9ed8c5e39862 100644
+--- a/erts/configure.ac
++++ b/erts/configure.ac
+@@ -606,12 +606,17 @@ AS_IF([test "x$GCC" = xyes],
+   # Until version 10, gcc has had -fcommon as default, which allows and merges
+   # such dubious duplicates.
+   LM_TRY_ENABLE_CFLAG([-fno-common], [CFLAGS])
+-  
++
++  # Make -fvisibility=hidden usable if supported. Currently only used by
++  # our PCRE2 to avoid symbol clashes with real PCRE2 if dynamically loaded.
++  LM_TRY_ENABLE_CFLAG([-fvisibility=hidden], [VISIBILITY_HIDDEN])
+  ],
+  [
+   WFLAGS=""
+   WERRORFLAGS=${WERRORFLAGS:-""}
++  VISIBILITY_HIDDEN=""
+  ])
++AC_SUBST(VISIBILITY_HIDDEN)
+ 
+ AC_MSG_CHECKING([C99 support])
+ 
+diff --git a/erts/emulator/Makefile.in b/erts/emulator/Makefile.in
+index 275e24e1eaab..5d6c12c8a544 100644
+--- a/erts/emulator/Makefile.in
++++ b/erts/emulator/Makefile.in
+@@ -36,6 +36,7 @@ Z_LIB=@Z_LIB@
+ CROSS_COMPILING = @CROSS_COMPILING@
+ NO_INLINE_FUNCTIONS=false
+ USING_VC=@MIXED_VC@
++VISIBILITY_HIDDEN=@VISIBILITY_HIDDEN@
+ 
+ OPCODE_TABLES = \
+     $(ERL_TOP)/lib/compiler/src/genop.tab \
+diff --git a/erts/emulator/pcre/pcre.mk b/erts/emulator/pcre/pcre.mk
+index e38d7fbc63c5..1c83084995a7 100644
+--- a/erts/emulator/pcre/pcre.mk
++++ b/erts/emulator/pcre/pcre.mk
+@@ -54,7 +54,7 @@ PCRE_OBJDIR = $(ERL_TOP)/erts/emulator/pcre/obj/$(TARGET)/$(TYPE)
+ 
+ PCRE_DIR =  $(ERL_TOP)/erts/emulator/pcre
+ 
+-PCRE_CFLAGS = $(filter-out -Wimplicit-fallthrough,$(CFLAGS)) -DERLANG_INTEGRATION
++PCRE_CFLAGS = $(filter-out -Wimplicit-fallthrough,$(CFLAGS)) $(VISIBILITY_HIDDEN) -DERLANG_INTEGRATION
+ 
+ ifeq ($(TARGET), win32)
+ $(EPCRE_LIB): $(PCRE_OBJS)
